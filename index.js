@@ -11,8 +11,6 @@ dotenv.config();
 
 const keypair = Ed25519Keypair.fromSecretKey(fromHEX(process.env.SECRET_KEY));
 
-const package_id = "0x1bd1f10339d3da1f4d57bfc9c30e7ee9cb20489df74bc3b314525b98f5e4c211";
-
 const init = async () => {
   // Set up provider.
   const suiClient = new SuiClient({
@@ -32,23 +30,28 @@ const init = async () => {
   // console.log(zero_coin);
 
   // tx.moveCall({
-  //   target: "0x44d12155bb085df7d5432f0ad2419eb46195c449c327c716f43b733cfd17884d::devnet_nft::mint_to_sender",
-  //   arguments: [tx.pure.u64(100), tx.pure.string("SYM"), tx.pure.string("name"), tx.pure.string("desc"), bcs.option(bcs.string()).serialize("some value"), tx.pure.bool(true)],
+  //   target: "0x2::coin::create_currency",
+  //   arguments: [
+  //     tx.object("0x2d45b8565fe2e65072e9e541425db25b56627dd7242e97052e22e0a2b5797c68"),
+  //     tx.pure.u8(6),
+  //     tx.pure.string("aa"),
+  //     tx.pure.string("bb"),
+  //     tx.pure.string("cc"),
+  //     tx.pure.string(""),
+  //   ],
   //   typeArguments: [
-  //     normalizeSuiObjectId("0x1"),
-  //     normalizeSuiObjectId("0x2"),
-  //     normalizeSuiObjectId(package_id),
-  //     // "0x02::package::UpgradeCap",
-  //     // tx.object("0xa540b41b0409c2b9855793f1768c701b475ba7c1093d7c1da9515b895c50e5bf").value,
-  //     // "0x2::SYM::SYM",
-  //     // "0xbf8c85ca9a2118356e47f9ae122a118ac9e5558ec0c617065e6789725769537e::one_time_witness_registry::UniqueTypeRecord<0xbf8c85ca9a2118356e47f9ae122a118ac9e5558ec0c617065e6789725769537e::my_otw::MY_OTW>",
+  //     "0xdb18895c540152d8de92fa685930e922be1c79efec4275a39b4831a73d572dd2::one_time_witness_registry::UniqueTypeRecord<0xdb18895c540152d8de92fa685930e922be1c79efec4275a39b4831a73d572dd2::my_otw::MY_OTW>",
   //   ],
   // });
 
   tx.moveCall({
-    target: "0x44d12155bb085df7d5432f0ad2419eb46195c449c327c716f43b733cfd17884d::devnet_nft::mint_to_sender",
-    arguments: [tx.pure.string("SYM"), tx.pure.string("name"), tx.pure.string("aaa")],
-    typeArguments: [],
+    target: "0x2::coin::mint_and_transfer",
+    arguments: [
+      tx.object("0xe0dec492c9aaca67c3b0e3aba81eff2e4e0e2365dc45bf953b2817ef9d16713d"),
+      tx.pure(30 * Math.pow(10, 9)),
+      tx.pure("0xbdd8530db59bb5268319f720b9ef2e5d653c538398c135b07c845e87f3a67570"),
+    ],
+    typeArguments: ["0x9883424d2a5c72c2f788aef33cdc6080d5eb24ad3a75d31e50201af91a3b46eb::witness::WITNESS"],
   });
 
   try {
