@@ -23,21 +23,21 @@ const init = async () => {
 
   const tx = new TransactionBlock();
 
-  // tx.moveCall({
-  //   target: "0x2::coin::mint_and_transfer",
-  //   arguments: [
-  //     tx.object("0x75bc9e624e69682be2a12472ef285dec374faeaf7469f52b3ec282cde252157e"),
-  //     tx.pure(1500 * Math.pow(10, 6)),
-  //     tx.pure("0xa6633459c2d47b9fbebc6b93ac0bbc62926b9d1e764a64ce3ff3d47172861b6d"),
-  //   ],
-  //   typeArguments: ["0x584f860e0bfc8c136d4518d7f3d62d453d44f09d6efbb9a07d947489ef977882::witness::WITNESS"],
-  // });
-
   tx.moveCall({
-    target: "0x2::coin::mint",
-    arguments: [tx.object("0x75bc9e624e69682be2a12472ef285dec374faeaf7469f52b3ec282cde252157e"), tx.pure(1 * Math.pow(10, 6))],
-    typeArguments: ["0x584f860e0bfc8c136d4518d7f3d62d453d44f09d6efbb9a07d947489ef977882::witness::WITNESS"],
+    target: "0x2::coin::mint_and_transfer",
+    arguments: [
+      tx.object("0xa131f493c40b8758e1afc7748fa0827b651b9ba7c3759afabac89d3912ca7b00"),
+      tx.pure(1500 * Math.pow(10, 6)),
+      tx.pure("0xa6633459c2d47b9fbebc6b93ac0bbc62926b9d1e764a64ce3ff3d47172861b6d"),
+    ],
+    typeArguments: ["0x0ae67ca5825abbaa6af52294cf87309eeb2fb11c8ad0f3057fc949e9303d513b::witness::WITNESS"],
   });
+
+  // tx.moveCall({
+  //   target: "0x2::coin::mint",
+  //   arguments: [tx.object("0xea5d99e51ee3c2c64bad5a155923fce13b0e9b39dcdde40cccb4a65c3d68ada9"), tx.pure(1 * Math.pow(10, 6))],
+  //   typeArguments: ["0x23f27baa6862ff1ca2928f4600777a110970f0b14331065b1a48cb2ec398e15d::witness::WITNESS"],
+  // });
 
   try {
     const result = await suiClient.signAndExecuteTransactionBlock({

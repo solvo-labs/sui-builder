@@ -20,14 +20,15 @@ const client = new SuiClient({
 // a11ceb0b060000000a01000c020c1e032a22044c0805545407a801b40108dc026006bc03240ae003050ce503280012010b0206020f021002110005020001010701000002000c01000102020c01000104030200050407000009000100010a01040100020706070102030c0901010c030d0d01010c040e0a0b00010302050308040c02080007080400020b020108000b03010800010805010b01010900010800070900020a020a020a020b01010805070804020b030109000b02010900010b02010800010900010608040105010b03010800020900050c436f696e4d65746164617461064f7074696f6e0b5472656173757279436170095478436f6e746578740355726c075749544e45535304636f696e0f6372656174655f63757272656e63790b64756d6d795f6669656c6404696e6974046e6f6e65066f7074696f6e147075626c69635f667265657a655f6f626a6563740f7075626c69635f7472616e736665720673656e646572087472616e736665720a74785f636f6e746578740375726c077769746e6573730000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020201090a02070653796d626f6c0a0205044e616d650a020c0b4465736372697074696f6e00020108010000000002120b00070007010702070338000a0138010c020c030b0238020b030b012e110538030200
 
 // ref = https://github.com/MystenLabs/asset-tokenization/blob/main/setup/src/publishAsset.ts
-const publishNewAsset = async (decimal, symbol, token_name, description) => {
+const publishNewAsset = async (decimal, symbol, token_name, description, iconUrl) => {
   const witness = getBytecode();
 
   const compiledModule = new CompiledModule(JSON.parse(wasm.deserialize(witness)))
     .updateConstant(0, decimal, "9", "u8")
     .updateConstant(1, symbol, "Symbol", "string")
     .updateConstant(2, token_name, "Name", "string")
-    .updateConstant(3, description, "Description", "string");
+    .updateConstant(3, description, "Description", "string")
+    .updateConstant(4, iconUrl, "Icon_Url", "string");
   // .changeIdentifiers({
   //   witness: symbol,
   //   WITNESS: symbol.toUpperCase(),
@@ -62,8 +63,10 @@ const publishNewAsset = async (decimal, symbol, token_name, description) => {
     // console.log("New asset published!", JSON.stringify(txRes, null, 2));
     console.log("New asset published! Digest:", txRes.digest);
 
-    console.log("alt", txRes.effects.created[0]);
-    console.log("üst", txRes.effects.created[2]);
+    // console.log("alt", txRes.effects.created[0]);
+    // console.log("üst", txRes.effects.created[2]);
+
+    console.log(txRes.effects);
     // const packageId = txRes.effects.created?.find((item) => item.owner === "Immutable")?.reference.objectId;
     // console.log("Package ID:", packageId);
   } else {
@@ -73,6 +76,6 @@ const publishNewAsset = async (decimal, symbol, token_name, description) => {
   }
 };
 
-publishNewAsset("6", "g", "tttttt", "HELLO THIS IS TOKEN");
+publishNewAsset("6", "aabbccdd", "aabbccddee", "HELLO THIS IS TOKEN", "https://ipfs.io/ipfs/bafkreidhxli7jw5swgbjvjdbn5gxehpfrduq22laamlrkakpvxxqivlpi4");
 
 //token = "0x46b367f7f3e19fcb23269a57756cde880251b29bd574303ad7b9ecc09549eb2f"
