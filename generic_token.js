@@ -5,7 +5,7 @@ const { SUI_TYPE_ARG } = require("@mysten/sui.js/utils");
 const { fromHEX } = require("@mysten/sui.js/utils");
 const yargs = require("yargs");
 const { bcs } = require("@mysten/sui.js/bcs");
-const wasm = require("./move-binary-format-wasm");
+const wasm = require("./move-binary-format-wasm/move_binary_format_wasm");
 const { normalizeSuiObjectId } = require("@mysten/sui.js/utils");
 
 const { getBytecode, CompiledModule } = require("./utils");
@@ -61,8 +61,11 @@ const publishNewAsset = async (decimal, symbol, token_name, description) => {
   if (txRes?.effects?.status.status === "success") {
     // console.log("New asset published!", JSON.stringify(txRes, null, 2));
     console.log("New asset published! Digest:", txRes.digest);
-    const packageId = txRes.effects.created?.find((item) => item.owner === "Immutable")?.reference.objectId;
-    console.log("Package ID:", packageId);
+
+    console.log("alt", txRes.effects.created[0]);
+    console.log("üst", txRes.effects.created[2]);
+    // const packageId = txRes.effects.created?.find((item) => item.owner === "Immutable")?.reference.objectId;
+    // console.log("Package ID:", packageId);
   } else {
     console.log(txRes);
     console.log("Error: ", txRes?.effects?.status);
@@ -70,4 +73,6 @@ const publishNewAsset = async (decimal, symbol, token_name, description) => {
   }
 };
 
-publishNewAsset("5", "MA", "Magical Asset", "A magical Asset that can be used for magical things!");
+publishNewAsset("6", "g", "tttttt", "HELLO THIS IS TOKEN");
+
+//token = "0x46b367f7f3e19fcb23269a57756cde880251b29bd574303ad7b9ecc09549eb2f"

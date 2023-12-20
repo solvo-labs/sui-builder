@@ -11,6 +11,8 @@ dotenv.config();
 
 const keypair = Ed25519Keypair.fromSecretKey(fromHEX(process.env.SECRET_KEY));
 
+// console.log(keypair.getPublicKey().toSuiAddress());
+
 const init = async () => {
   // Set up provider.
   const suiClient = new SuiClient({
@@ -21,37 +23,20 @@ const init = async () => {
 
   const tx = new TransactionBlock();
 
-  // const zero_coin = tx.moveCall({
-  //   target: "0x2::coin::zero",
-  //   typeArguments: ["0x2::sui::SUI"],
-  //   arguments: [],
-  // });
-
-  // console.log(zero_coin);
-
   // tx.moveCall({
-  //   target: "0x2::coin::create_currency",
+  //   target: "0x2::coin::mint_and_transfer",
   //   arguments: [
-  //     tx.object("0x2d45b8565fe2e65072e9e541425db25b56627dd7242e97052e22e0a2b5797c68"),
-  //     tx.pure.u8(6),
-  //     tx.pure.string("aa"),
-  //     tx.pure.string("bb"),
-  //     tx.pure.string("cc"),
-  //     tx.pure.string(""),
+  //     tx.object("0x75bc9e624e69682be2a12472ef285dec374faeaf7469f52b3ec282cde252157e"),
+  //     tx.pure(1500 * Math.pow(10, 6)),
+  //     tx.pure("0xa6633459c2d47b9fbebc6b93ac0bbc62926b9d1e764a64ce3ff3d47172861b6d"),
   //   ],
-  //   typeArguments: [
-  //     "0xdb18895c540152d8de92fa685930e922be1c79efec4275a39b4831a73d572dd2::one_time_witness_registry::UniqueTypeRecord<0xdb18895c540152d8de92fa685930e922be1c79efec4275a39b4831a73d572dd2::my_otw::MY_OTW>",
-  //   ],
+  //   typeArguments: ["0x584f860e0bfc8c136d4518d7f3d62d453d44f09d6efbb9a07d947489ef977882::witness::WITNESS"],
   // });
 
   tx.moveCall({
-    target: "0x2::coin::mint_and_transfer",
-    arguments: [
-      tx.object("0xe0dec492c9aaca67c3b0e3aba81eff2e4e0e2365dc45bf953b2817ef9d16713d"),
-      tx.pure(30 * Math.pow(10, 9)),
-      tx.pure("0xbdd8530db59bb5268319f720b9ef2e5d653c538398c135b07c845e87f3a67570"),
-    ],
-    typeArguments: ["0x9883424d2a5c72c2f788aef33cdc6080d5eb24ad3a75d31e50201af91a3b46eb::witness::WITNESS"],
+    target: "0x2::coin::mint",
+    arguments: [tx.object("0x75bc9e624e69682be2a12472ef285dec374faeaf7469f52b3ec282cde252157e"), tx.pure(1 * Math.pow(10, 6))],
+    typeArguments: ["0x584f860e0bfc8c136d4518d7f3d62d453d44f09d6efbb9a07d947489ef977882::witness::WITNESS"],
   });
 
   try {
