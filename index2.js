@@ -17,33 +17,30 @@ const client = new SuiClient({
   url: getFullnodeUrl("testnet"),
 });
 
-const genesis_byte_code =
-  "a11ceb0b0600000009010006020608030e0b041902051b10072b4d0878400ab801050cbd010d000401060107000002000201020000050001000102030101020102020800070801000108000209000708010747454e45534953095478436f6e746578740e636c61696d5f616e645f6b6565700b64756d6d795f6669656c640767656e6573697304696e6974077061636b6167650a74785f636f6e746578740000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200020103010000000001040b000b0138000200";
+// a11ceb0b060000000a01000c020c1e032a22044c0805545407a801b40108dc026006bc03240ae003050ce503280012010b0206020f021002110005020001010701000002000c01000102020c01000104030200050407000009000100010a01040100020706070102030c0901010c030d0d01010c040e0a0b00010302050308040c02080007080400020b020108000b03010800010805010b01010900010800070900020a020a020a020b01010805070804020b030109000b02010900010b02010800010900010608040105010b03010800020900050c436f696e4d65746164617461064f7074696f6e0b5472656173757279436170095478436f6e746578740355726c075749544e45535304636f696e0f6372656174655f63757272656e63790b64756d6d795f6669656c6404696e6974046e6f6e65066f7074696f6e147075626c69635f667265657a655f6f626a6563740f7075626c69635f7472616e736665720673656e646572087472616e736665720a74785f636f6e746578740375726c077769746e6573730000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020201090a02070653796d626f6c0a0205044e616d650a020c0b4465736372697074696f6e00020108010000000002120b00070007010702070338000a0138010c020c030b0238020b030b012e110538030200
 
-const package_id = "0x1bd1f10339d3da1f4d57bfc9c30e7ee9cb20489df74bc3b314525b98f5e4c211";
+// ref = https://github.com/MystenLabs/asset-tokenization/blob/main/setup/src/publishAsset.ts
+const publishNewAsset = async (decimal, symbol, token_name, description) => {
+  const witness = getBytecode();
 
-const publishNewAsset = async (moduleName, totalSupply, symbol, asset_name, description, iconUrl, burnable) => {
-  const template = getBytecode();
-
-  const compiledModule = new CompiledModule(JSON.parse(wasm.deserialize(template)))
-    .updateConstant(0, totalSupply, "100", "u64")
+  const compiledModule = new CompiledModule(JSON.parse(wasm.deserialize(witness)))
+    .updateConstant(0, decimal, "9", "u8")
     .updateConstant(1, symbol, "Symbol", "string")
-    .updateConstant(2, asset_name, "Name", "string")
-    .updateConstant(3, description, "Description", "string")
-    .updateConstant(4, iconUrl, "icon_url", "string")
-    .updateConstant(5, burnable, "true", "bool")
-    .changeIdentifiers({
-      template: moduleName,
-      TEMPLATE: moduleName.toUpperCase(),
-    });
+    .updateConstant(2, token_name, "Name", "string")
+    .updateConstant(3, description, "Description", "string");
+  // .changeIdentifiers({
+  //   witness: symbol,
+  //   WITNESS: symbol.toUpperCase(),
+  // });
 
   const bytesToPublish = wasm.serialize(JSON.stringify(compiledModule));
 
   const tx = new TransactionBlock();
   tx.setGasBudget(100000000);
+
   const [upgradeCap] = tx.publish({
-    modules: [[...fromHEX(bytesToPublish)], [...fromHEX(genesis_byte_code)]],
-    dependencies: [normalizeSuiObjectId("0x1"), normalizeSuiObjectId("0x2"), normalizeSuiObjectId(package_id)],
+    modules: [[...fromHEX(bytesToPublish)]],
+    dependencies: [normalizeSuiObjectId("0x1"), normalizeSuiObjectId("0x2")],
   });
 
   tx.transferObjects([upgradeCap], tx.pure(keypair.getPublicKey().toSuiAddress(), "address"));
@@ -61,18 +58,16 @@ const publishNewAsset = async (moduleName, totalSupply, symbol, asset_name, desc
     },
   });
 
-  console.log(txRes);
-
-  // if (txRes?.effects?.status.status === "success") {
-  //   // console.log("New asset published!", JSON.stringify(txRes, null, 2));
-  //   console.log("New asset published! Digest:", txRes.digest);
-  //   const packageId = txRes.effects.created?.find((item) => item.owner === "Immutable")?.reference.objectId;
-  //   console.log("Package ID:", packageId);
-  // } else {
-  //   console.log(txRes);
-  //   console.log("Error: ", txRes?.effects?.status);
-  //   throw new Error("Publishing failed");
-  // }
+  if (txRes?.effects?.status.status === "success") {
+    // console.log("New asset published!", JSON.stringify(txRes, null, 2));
+    console.log("New asset published! Digest:", txRes.digest);
+    const packageId = txRes.effects.created?.find((item) => item.owner === "Immutable")?.reference.objectId;
+    console.log("Package ID:", packageId);
+  } else {
+    console.log(txRes);
+    console.log("Error: ", txRes?.effects?.status);
+    throw new Error("Publishing failed");
+  }
 };
 
-publishNewAsset("magical_asset", "200", "MA", "Magical Asset", "A magical Asset that can be used for magical things!", "new-icon_url", "true");
+publishNewAsset("5", "MA", "Magical Asset", "A magical Asset that can be used for magical things!");
